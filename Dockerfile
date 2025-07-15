@@ -28,28 +28,28 @@ ENV NODE_ENV=production
 RUN yarn run load-config
 RUN yarn config set "strict-ssl" false -g && \
   yarn install
-RUN yarn run build
-
-### NGINX
-FROM nginx:latest
-#COPY APP
-COPY --from=build-stage /app/build/ /usr/share/nginx/html
-#COPY DEFAULT CERTS
-COPY --from=build-stage /etc/ssl/private/ /etc/nginx/ssl/live/host
-
-COPY ./conf /conf
-COPY script/entrypoint.sh /script/entrypoint.sh
-# Generate Diffie-Hellman Parameters (2048-bit)
-RUN openssl dhparam -out /etc/nginx/dhparam.pem 2048
-RUN chmod a+x /script/entrypoint.sh
-WORKDIR /script
-ENV DATA_UPLOAD_MAX_MEMORY_SIZE=12582912
-ENV NEW_OPENIMIS_HOST="localhost"
-ENV PUBLIC_URL="front"
-ENV REACT_APP_API_URL="api"
-ENV ROOT_MOBILEAPI="rest"
-ENV FORCE_RELOAD=""
-ENV OPENSEARCH_PROXY_ROOT="opensearch"
-
-ENTRYPOINT ["/bin/bash","/script/entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+# RUN yarn run build
+#
+# ### NGINX
+# FROM nginx:latest
+# #COPY APP
+# COPY --from=build-stage /app/build/ /usr/share/nginx/html
+# #COPY DEFAULT CERTS
+# COPY --from=build-stage /etc/ssl/private/ /etc/nginx/ssl/live/host
+#
+# COPY ./conf /conf
+# COPY script/entrypoint.sh /script/entrypoint.sh
+# # Generate Diffie-Hellman Parameters (2048-bit)
+# RUN openssl dhparam -out /etc/nginx/dhparam.pem 2048
+# RUN chmod a+x /script/entrypoint.sh
+# WORKDIR /script
+# ENV DATA_UPLOAD_MAX_MEMORY_SIZE=12582912
+# ENV NEW_OPENIMIS_HOST="localhost"
+# ENV PUBLIC_URL="front"
+# ENV REACT_APP_API_URL="api"
+# ENV ROOT_MOBILEAPI="rest"
+# ENV FORCE_RELOAD=""
+# ENV OPENSEARCH_PROXY_ROOT="opensearch"
+#
+# ENTRYPOINT ["/bin/bash","/script/entrypoint.sh"]
+# CMD ["nginx", "-g", "daemon off;"]
